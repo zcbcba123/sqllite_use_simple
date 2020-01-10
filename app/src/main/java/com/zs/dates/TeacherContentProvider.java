@@ -12,14 +12,16 @@ import android.text.TextUtils;
 
 import static com.zs.dates.ContentData.UserTableData.CONTENT_TYPE;
 import static com.zs.dates.ContentData.UserTableData.CONTENT_TYPE_ITME;
+import static com.zs.dates.ContentData.UserTableData.INSERT;
+import static com.zs.dates.ContentData.UserTableData.QUERY;
 import static com.zs.dates.ContentData.UserTableData.TEACHER;
 import static com.zs.dates.ContentData.UserTableData.TEACHERS;
 import static com.zs.dates.ContentData.UserTableData.uriMatcher;
 
-/**
- * 这个类给外部程序提供访问内部数据的一个接口
- */
-public class TeacherContentProvider extends ContentProvider{
+    /**
+     * 这个类给外部程序提供访问内部数据的一个接口
+     */
+    public class TeacherContentProvider extends ContentProvider{
     private DBOpenHelper dbOpenHelper=null;
     //UriMatcher类用来匹配Uri，使用match()方法匹配路径时返回匹配码
     /**
@@ -51,6 +53,10 @@ public class TeacherContentProvider extends ContentProvider{
                 id = db.insert("teacher",null,values);
                 String path = uri.toString();
                 return Uri.parse(path.substring(0,path.lastIndexOf("/"))+id);
+            case INSERT:
+                id = db.insert("teacher",null,values);
+                String pathIn = uri.toString();
+                return Uri.parse(pathIn.substring(0,pathIn.lastIndexOf("/"))+id);
             default:
                 throw new IllegalArgumentException("Unknown URI"+uri);
         }
@@ -128,8 +134,19 @@ public class TeacherContentProvider extends ContentProvider{
                 // 进行解析，返回值为10
                 long personid = ContentUris.parseId(uri);
                 String where = "_ID=" + personid;//获取指定id的记录
-                where += !TextUtils.isEmpty(selection) ? "and(" + selection + ")" : "";//把其他条件附加上
+                where += !TextUtils.isEmpty(selection) ? " and (" + selection + ")" : "";//把其他条件附加上
                 return db.query("teacher", projection, where, selectionArgs, null, null, sortOrder);
+            case QUERY:
+                long personidQ = ContentUris.parseId(uri);
+                String whereQ=!"-1".equals(personidQ)?whereQ = "_ID=" + personidQ:"";//获取指定id的记录
+                whereQ += !TextUtils.isEmpty(selection) ? " and (" + selection + ")" : "";//把其他条件附加上
+                Cursor cursor = null;
+                try{
+                     cursor = db.query("teacher", projection, whereQ, selectionArgs, null, null, sortOrder);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                return cursor;
             default:
                 throw new IllegalArgumentException("Unkown URI " + uri);
         }

@@ -17,7 +17,11 @@ public class ContentData {
     public static final class UserTableData implements BaseColumns {
         public static final String TABLE_NAME = "teacher";
         //Uri
-        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/teacher");
+        public static final Uri INSERT_URI = Uri.parse("content://" + AUTHORITY + "/teacher/insert");
+        public static final Uri DELETE_URI = Uri.parse("content://" + AUTHORITY + "/teacher/6");
+        public static final Uri UPDATE_URI = Uri.parse("content://" + AUTHORITY + "/teacher/6");
+        public static final String QUERY_URI = "content://" + AUTHORITY + "/teacher/query/";
+        public static final Uri QUERYS_URI = Uri.parse("content://" + AUTHORITY + "/teacher/6");
         //数据集的MIME类型字符串应该以vnd.android.cursor.dir/开头
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/hb.android.teachers";
         //单一数据的MIME类型字符串应该以vnd.android.cursor.item/开头
@@ -26,6 +30,8 @@ public class ContentData {
         public static final int TEACHERS = 1;
         /*自定义匹配代码*/
         public static final int TEACHER = 2;
+        public static final int INSERT = 3;
+        public static final int QUERY = 4;
 
         public static final String TITLE = "title";
 
@@ -43,6 +49,8 @@ public class ContentData {
             uriMatcher.addURI(ContentData.AUTHORITY, "teacher", TEACHERS);
             // 如果match()方法匹配content://hb.android.teacherProvider/teacher/230,路径，返回匹配码为TEACHER
             uriMatcher.addURI(ContentData.AUTHORITY, "teacher/#", TEACHER);
+            uriMatcher.addURI(ContentData.AUTHORITY, "teacher/insert", INSERT);
+            uriMatcher.addURI(ContentData.AUTHORITY, "teacher/query/#", QUERY);
         }
 
     }

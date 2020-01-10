@@ -4,16 +4,119 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="插入title字段的值:"/>
+        <Spinner
+            android:id="@+id/sp_name_main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:entries="@array/spinnerarr"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="插入name字段的值:"/>
+        <EditText
+            android:id="@+id/et_insertValue_main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+    </LinearLayout>
     <Button
         android:id="@+id/insert"
         android:text="@string/insert"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@+id/tv_resInsert"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="插入的结果:"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorPrimary"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="按id查询: "/>
+        <EditText
+            android:id="@+id/et_queryId_main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="按title查询: "/>
+        <EditText
+            android:id="@+id/et_queryTitle_main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="按name查询: "/>
+        <EditText
+            android:id="@+id/et_queryName_main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+    </LinearLayout>
     <Button
         android:id="@+id/query"
         android:text="@string/query"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/tv_resQuery"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="查询的结果:"/>
+
+
     <Button
         android:id="@+id/querys"
         android:text="@string/querys"

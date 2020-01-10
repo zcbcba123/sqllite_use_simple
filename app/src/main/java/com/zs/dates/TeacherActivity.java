@@ -7,7 +7,14 @@ import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
 
 public class TeacherActivity extends AppCompatActivity {
     Button insert;
@@ -15,7 +22,12 @@ public class TeacherActivity extends AppCompatActivity {
     Button update;
     Button delete;
     Button querys;
-    Uri uri = Uri.parse("content://hb.android.contentProvider/teacher/44");
+    TextView tv_resInsert,tv_resQuery;
+    private Spinner sp_name_main;
+    private EditText et_name_main,et_queryId_main,et_queryTitle_main,et_queryName_main;
+    String mTitle ="title";
+
+    //    Uri uri = Uri.parse("content://hb.android.contentProvider/teacher/6");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,6 +37,26 @@ public class TeacherActivity extends AppCompatActivity {
         update = (Button) findViewById(R.id.update);
         delete = (Button) findViewById(R.id.delete);
         querys = (Button) findViewById(R.id.querys);
+        tv_resInsert = (TextView) findViewById(R.id.tv_resInsert);
+        sp_name_main = (Spinner) findViewById(R.id.sp_name_main);
+        et_name_main = (EditText) findViewById(R.id.et_insertValue_main);
+        et_queryId_main = (EditText) findViewById(R.id.et_queryId_main);
+        et_queryTitle_main = (EditText) findViewById(R.id.et_queryTitle_main);
+        et_queryName_main = (EditText) findViewById(R.id.et_queryName_main);
+        tv_resQuery = (TextView) findViewById(R.id.tv_resQuery);
+        sp_name_main.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String[] s = getResources().getStringArray(R.array.spinnerarr);
+//                Toast.makeText(TeacherActivity.this,"你点击的是"+s[i],Toast.LENGTH_LONG).show();
+                mTitle =s[i];
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         insert.setOnClickListener(new InsertListener());
         query.setOnClickListener(new QueryListener());
@@ -35,7 +67,7 @@ public class TeacherActivity extends AppCompatActivity {
                 ContentResolver cr = getContentResolver();
                 ContentValues cv = new ContentValues();
                 cv.put("name","lvcha");
-                int uri2 = cr.update(uri,cv,"_ID=?",new String[]{"3"});
+                int uri2 = cr.update(ContentData.UserTableData.UPDATE_URI,cv,"_ID=?",new String[]{"3"});
                 System.out.println("updated: "+uri2);
             }
         });
@@ -44,7 +76,7 @@ public class TeacherActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ContentResolver cr = getContentResolver();
-                cr.delete(uri,"_ID=?",new String[]{"2"});
+                cr.delete(ContentData.UserTableData.DELETE_URI,"_ID=?",new String[]{"2"});
             }
         });
 
@@ -52,7 +84,7 @@ public class TeacherActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ContentResolver cr = getContentResolver();
-                Cursor c = cr.query(uri, null, null, null, null);
+                        Cursor c = cr.query(ContentData.UserTableData.QUERYS_URI, null, null, null, null);
                 System.out.println(c.getCount());
                 c.close();
             }
@@ -64,11 +96,12 @@ public class TeacherActivity extends AppCompatActivity {
         public void onClick(View view) {
             ContentResolver cr = getContentResolver();
             ContentValues cv = new ContentValues();
-            cv.put("title","jiaoshou");
-            cv.put("name", "jiaoshi");
+            cv.put("title", mTitle);
+            cv.put("name", et_name_main.getText().toString());
             cv.put("sex", false);
-            Uri uri2 = cr.insert(uri, cv);//Inserts a row into a table at the given URL. If the content provider supports transactions the insertion will be atomic.
+            Uri uri2 = cr.insert(ContentData.UserTableData.INSERT_URI, cv);//Inserts a row into a table at the given URL. If the content provider supports transactions the insertion will be atomic.
             System.out.println(uri2.toString());
+            tv_resInsert.setText("插入的结果: "+uri2.toString());
         }
     }
 
@@ -77,20 +110,47 @@ public class TeacherActivity extends AppCompatActivity {
         public void onClick(View view) {
             ContentResolver cr = getContentResolver();
             //查找数据为1的数据
-            Cursor c = cr.query(uri, null, "_ID=?", new String[]{"1"}, null);
-            //这里必须要调用 c.moveToFirst将游标移动到第一条数据,不然会出现index -1 requested , with a size of 1错误；cr.query返回的是一个结果集。
-            if(c.moveToFirst()==false){
+            Cursor c = null;
+            String id = et_queryId_main.getText().toString();
+            String title = et_queryTitle_main.getText().toString();
+            String name = et_queryName_main.getText().toString();
+            if ("".equals(id)&&"".equals(title)&&"".equals(name)){
+                Toast.makeText(TeacherActivity.this,"请填写要查的信息",Toast.LENGTH_LONG).show();
                 return;
             }
-            int name = c.getColumnIndex("name");
-            int title = c.getColumnIndex("title");
-            int sex = c.getColumnIndex("sex");
-            System.out.println(c.getString(name));
-            System.out.println(c.getString(title));
+            if ("".equals(id)){
+                id="-1";
+            }
+
             try {
-                int anInt = c.getInt(sex);
-                System.out.println(anInt);
-                System.out.println();
+                ArrayList<String> list = new ArrayList<String>();
+                StringBuffer selection = new StringBuffer();
+                if (!"".equals(title)){
+                    selection.append("title=?");
+                    list.add(title);
+                }
+                if (!"".equals(name)){
+                    String end = selection.substring(selection.length() - 1, selection.length());
+                    if ("?".equals(end)){
+                        selection.append(" and name=?");
+                    }else {
+                        selection.append("name=?");
+                    }
+                    list.add(name);
+                }
+                String[] array =new String[list.size()];
+                String[] strings=list.size()>0?(String[]) list.toArray(array):null;
+                //"title=?",
+                c = cr.query(Uri.parse(ContentData.UserTableData.QUERY_URI+id), null, selection.toString() ,strings, null);
+                //这里必须要调用 c.moveToFirst将游标移动到第一条数据,不然会出现index -1 requested , with a size of 1错误；cr.query返回的是一个结果集。
+                if (c.moveToFirst() == false) {
+                    return;
+                }
+                int nameInt = c.getColumnIndex("name");
+                int titleInt = c.getColumnIndex("title");
+                String titleContent = c.getString(nameInt);
+                String nameContent = c.getString(titleInt);
+                tv_resQuery.setText("title: "+titleContent+"\n"+" name: "+nameContent );
             }catch (Exception e){
                 e.printStackTrace();
             }
